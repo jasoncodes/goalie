@@ -6,8 +6,15 @@
   ]
   names = traces.collect {|name, trace| name}
 
+  editor_scheme = case
+  when system('killall -0 Vim 2> /dev/null')
+    'mvim'
+  when system('killall -0 TextMate 2> /dev/null')
+    'txmt'
+  end
+
   targets = @exception.backtrace.map do |line|
-    line =~ /^(.+):(\d+):in/ && "txmt://open?url=file://#{$1}&line=#{$2}&column=1"
+    line =~ /^(.+):(\d+):in/ && editor_scheme && "#{editor_scheme}://open?url=file://#{$1}&line=#{$2}&column=1"
   end
   targets = Hash[@full_trace.zip(targets)]
 %>
